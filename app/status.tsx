@@ -19,7 +19,7 @@ export default function LiveStatus() {
 
     fetchAndSetData(); // fetch immediately on mount
     // change to 1s later
-    const interval = setInterval(fetchAndSetData, 10000000000);
+    const interval = setInterval(fetchAndSetData, 1000);
 
     return () => clearInterval(interval);
   }, []);

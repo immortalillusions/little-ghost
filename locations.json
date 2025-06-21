@@ -1,5 +1,5 @@
 {
-  "thermo_location": "0",
-  "lock_location": "91",
-  "light_location": "180"
+  "thermo_location": 11.7,
+  "lock_location": 358.1,
+  "light_location": 40
 }

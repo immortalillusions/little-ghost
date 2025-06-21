@@ -1,19 +1,19 @@
-// {"gesture":"right_roll", "location":"91"}
+// {"gesture":"roll_right", "location":"91"}
 // location: number from 0 to 360
-// gesture: forward_roll, backward_roll, right_roll, left_roll
+// gesture: pitch_up, pitch_down, roll_right, roll_left
 
 "use server";
 import { Data } from './types';
 import fs from "fs/promises";
 import path from "path";
 
-let temp = 20; // temp
+let temp = 20; // temp (and change updateJSON to be 45)
 let thermostat = false; // off
 let light = false; // off
 let lock = false; // unlocked
 let message = "";
 let item = "NONE"; // default item
-const tolerance = 5;
+const tolerance = 20;
 
 export async function fetchData() {
   // simulate getting data from the accelerator / gyrometer
@@ -41,10 +41,10 @@ export async function fetchData() {
   console.log(`Gesture: ${gesture}, Item: ${item}`);
   // change temp
   if (item == "thermostat" && thermostat) {
-    if(gesture == 'forward_roll') {
+    if(gesture == 'pitch_up') {
       temp += 1; // increase temp
       message = "Temperature increased to " + temp + "°C";
-    } else if (gesture == 'backward_roll') {
+    } else if (gesture == 'pitch_down') {
       temp -= 1;
       message = "Temperature decreased to " + temp + "°C";
 
@@ -52,30 +52,30 @@ export async function fetchData() {
   }
   // open thermostat
   if (item == "thermostat") {
-    if (gesture == 'right_roll') {
+    if (gesture == 'roll_right') {
       thermostat = true; // turn on
       message = "Thermostat turned on";
-    } else if (gesture == 'left_roll') {
+    } else if (gesture == 'roll_left') {
       thermostat = false; // turn off
       message = "Thermostat turned off";
     }
   }
   // toggle light
   if (item == "light") {
-    if (gesture == 'right_roll') {
+    if (gesture == 'roll_right') {
       light = true; // turn on
       message = "Light turned on";
-    } else if (gesture == 'left_roll') {
+    } else if (gesture == 'roll_left') {
       light = false; // turn off
       message = "Light turned off";
     }
   }
   // toggle lock
   if (item == "lock") {
-    if (gesture == 'right_roll') {
+    if (gesture == 'roll_right') {
       lock = true; // lock
       message = "Door locked";
-    } else if (gesture == 'left_roll') {
+    } else if (gesture == 'roll_left') {
       lock = false; // unlock
       message = "Door unlocked";
     }

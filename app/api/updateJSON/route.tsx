@@ -25,12 +25,12 @@ export async function POST(request: Request) {
  // Check for proximity to other types
   const currentKey = keyMap[type];
   const otherKeys = Object.values(keyMap).filter(k => k !== currentKey);
-  const tooClose = otherKeys.some(k => Math.abs(locations[k] - value) < 20);
+  const tooClose = otherKeys.some(k => Math.abs(locations[k] - value) < 45);
 
   if (tooClose) {
     return Response.json({
       success: false,
-      message: `Items must be 20+ degrees apart.`,
+      message: `Items must be 45+ degrees apart.`,
       positions: {
       thermo_location: locations.thermo_location,
       lock_location: locations.lock_location,
