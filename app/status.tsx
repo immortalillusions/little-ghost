@@ -5,6 +5,22 @@ import {fetchData} from './data';
 import { Data } from './types';
 export default function LiveStatus() {
 const [data, setData] = useState<Data | null>(null);
+const [thermo, setThermo] = useState<number | null>(null);
+const [lock, setLock] = useState<number | null>(null);
+const [light, setLight] = useState<number | null>(null);
+  // Fetch positions once on mount
+  useEffect(() => {
+    const fetchPositions = async () => {
+      const response = await fetch("http://localhost:3000/api/getJSON");
+      if (response.status === 200) {
+        const data = await response.json();
+        setThermo(data.thermo_location);
+        setLight(data.light_location);
+        setLock(data.lock_location);
+      }
+    };
+    fetchPositions();
+  }, []);
 
   useEffect(() => {
     const fetchAndSetData = async () => {
@@ -28,6 +44,11 @@ const [data, setData] = useState<Data | null>(null);
 
   return (
     <div>
+        <div>Lil Ghost is looking at {data.location} degrees.</div>
+        <div>Lil Ghost is looking at {data.item == "nothing" ? "nothing" : "the "+data.item}.</div>
+        <div>Thermostat location: {thermo}</div>
+        <div>Lock location: {lock}</div>
+        <div>Light location: {light}</div>
         <div> {data.message != "" ? "Message: " + data.message: ""}</div>
         <div>
             <div>Temp: {data.thermostat ? data.temp : "Thermostat is off"}</div>

@@ -3,5 +3,7 @@ export type Data = {
   thermostat: boolean;
   light: boolean;
   lock: boolean;
-  message: string; // Optional message field
+  message: string; 
+  location: number;
+  item: string; // "thermostat", "lock", "light", or "nothing"
 };

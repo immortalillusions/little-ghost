@@ -12,8 +12,14 @@ let thermostat = false; // off
 let light = false; // off
 let lock = false; // unlocked
 let message = "";
-let item = "NONE"; // default item
+let item = "nothing"; // default item
 const tolerance = 20;
+
+// account for circularity
+function inRange(center: number, value: number, tolerance: number) {
+  const diff = Math.abs(((value - center + 180 + 360) % 360) - 180);
+  return diff <= tolerance;
+}
 
 export async function fetchData() {
   // simulate getting data from the accelerator / gyrometer
@@ -27,14 +33,14 @@ export async function fetchData() {
   const locationsRaw = await fs.readFile(locationsPath, "utf-8");
   const { thermo_location, lock_location, light_location } = JSON.parse(locationsRaw);
 
-  if (thermo_location - tolerance <= location && location <= thermo_location + tolerance) {
-    item = "thermostat"; // thermostat
-  } else if (lock_location - tolerance <= location && location <= lock_location + tolerance) {
-    item = "lock"; // lock
-  } else if (light_location - tolerance <= location && location <= light_location + tolerance) {
-    item = "light"; // light  
+  if (inRange(thermo_location, location, tolerance)) {
+    item = "thermostat";
+  } else if (inRange(lock_location, location, tolerance)) {
+    item = "lock";
+  } else if (inRange(light_location, location, tolerance)) {
+    item = "light";
   } else {
-    item = "NONE"; // no item
+    item = "nothing";
   }
   console.log(`Location: ${location}, Item: ${item}`);
 
@@ -43,10 +49,10 @@ export async function fetchData() {
   if (item == "thermostat" && thermostat) {
     if(gesture == 'pitch_up') {
       temp += 1; // increase temp
-      message = "Temperature increased to " + temp + "°C";
+      message = "Lil Ghost increased temperature to " + temp + "°C";
     } else if (gesture == 'pitch_down') {
       temp -= 1;
-      message = "Temperature decreased to " + temp + "°C";
+      message = "Lil Ghost decreased temperature to " + temp + "°C";
 
     } 
   }
@@ -54,31 +60,31 @@ export async function fetchData() {
   if (item == "thermostat") {
     if (gesture == 'roll_right') {
       thermostat = true; // turn on
-      message = "Thermostat turned on";
+      message = "Lil Ghost turned on the thermostat";
     } else if (gesture == 'roll_left') {
       thermostat = false; // turn off
-      message = "Thermostat turned off";
+      message = "Lil Ghost turned off the thermostat";
     }
   }
   // toggle light
   if (item == "light") {
     if (gesture == 'roll_right') {
       light = true; // turn on
-      message = "Light turned on";
+      message = "Lil Ghost turned on the light";
     } else if (gesture == 'roll_left') {
       light = false; // turn off
-      message = "Light turned off";
+      message = "Lil Ghost turned off the light";
     }
   }
   // toggle lock
   if (item == "lock") {
     if (gesture == 'roll_right') {
       lock = true; // lock
-      message = "Door locked";
+      message = "Lil Ghost locked the door";
     } else if (gesture == 'roll_left') {
       lock = false; // unlock
-      message = "Door unlocked";
+      message = "Lil Ghost unlocked the door";
     }
   }
-  return {temp, thermostat, light, lock, message} as Data;
+  return {temp, thermostat, light, lock, message, location, item} as Data;
 }
