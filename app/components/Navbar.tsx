@@ -22,6 +22,7 @@ export default function Navbar() {
   ];
 
   const isActive = (href: string) => {
+    console.log(href +"is active"+ pathname);
     if (href === "/") {
       return pathname === "/";
     }

@@ -6,4 +6,5 @@ export type Data = {
   message: string; 
   location: number;
   item: string; // "thermostat", "lock", "light", or "nothing"
+  mock?: boolean; // for testing purposes
 };

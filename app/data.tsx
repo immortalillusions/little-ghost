@@ -28,6 +28,7 @@ export async function fetchData() {
   const data = await res.json();
   const gesture = data.gesture;
   const location = data.location;
+  const mock = data.mock;
   // Read locations from a JSON file
   const locationsPath = path.join(process.cwd(), "locations.json");
   const locationsRaw = await fs.readFile(locationsPath, "utf-8");
@@ -86,5 +87,5 @@ export async function fetchData() {
       message = "Lil Ghost unlocked the door";
     }
   }
-  return {temp, thermostat, light, lock, message, location, item} as Data;
+  return {temp, thermostat, light, lock, message, location, item, mock} as Data;
 }

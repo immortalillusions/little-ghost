@@ -24,22 +24,31 @@ export default function LiveStatus() {
     fetchPositions();
   }, []);
 
-  useEffect(() => {
-    const fetchAndSetData = async () => {
-      try {
-        const result = await fetchData();
-        setData(result);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        setData(null);
+useEffect(() => {
+    let stopped = false;
+
+    const fetchLoop = async () => {
+      while (!stopped) {
+        const start = performance.now();
+        try {
+          const result = await fetchData();
+          setData(result);
+        } catch (error) {
+          console.error("Error fetching data:", error);
+          setData(null);
+        }
+
+        const elapsed = performance.now() - start; // if we're trying to change pages, performance will be slower and this value will be negative
+        const delay = Math.max(200 - elapsed, 50); // 50 ms delay or at most 200 ms delay when we're changing pages
+        await new Promise((res) => setTimeout(res, delay));
       }
     };
 
-    fetchAndSetData(); // fetch immediately on mount
-    // change to 1s later
-    const interval = setInterval(fetchAndSetData, 50);
+    fetchLoop(); // async promise causes stopped = true to be run first which allows us to exit the while loop. in next use effect, it (while loop / api call) can be called again
 
-    return () => clearInterval(interval);
+    return () => {
+      stopped = true;
+    };
   }, []);
   
   console.log("Data fetched:", data);
@@ -101,7 +110,7 @@ export default function LiveStatus() {
             <span className="animate-bounce" style={{ animationDelay: '0.2s' }}>👻</span>
           </h1>
           <div className="text-purple-300 text-lg opacity-80">
-            Monitoring the home...
+            {data.mock ? "No input - mock data being used":"Monitoring the home..."}
           </div>
         </div>
 
