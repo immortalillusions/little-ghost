@@ -23,7 +23,8 @@ function inRange(center: number, value: number, tolerance: number) {
 
 export async function fetchData() {
   // simulate getting data from the accelerator / gyrometer
-  const res = await fetch('http://localhost:3000/api/getInstructions'); // Example API
+  const baseUrl = process.env.NODE_ENV === "production"? process.env.PUBLIC_BASE_URL: "http://localhost:3000"; // Use environment variable or fallback to localhost
+  const res = await fetch(`${baseUrl}/api/getInstructions`); // Example API
   if (!res.ok) throw new Error('Failed to fetch data');
   const data = await res.json();
   const gesture = data.gesture;

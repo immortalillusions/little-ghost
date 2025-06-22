@@ -9,11 +9,14 @@ export default function LiveStatus() {
   const [thermo, setThermo] = useState<number | null>(null);
   const [lock, setLock] = useState<number | null>(null);
   const [light, setLight] = useState<number | null>(null);
+  const baseUrl = process.env.NODE_ENV === "production"? process.env.PUBLIC_BASE_URL: "http://localhost:3000"; // Use environment variable or fallback to localhost
+
 
   // Fetch positions once on mount
   useEffect(() => {
     const fetchPositions = async () => {
-      const response = await fetch("http://localhost:3000/api/getJSON");
+      const response = await fetch(`${baseUrl}/api/getJSON`);
+      
       if (response.status === 200) {
         const data = await response.json();
         setThermo(data.thermo_location);
