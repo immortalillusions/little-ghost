@@ -1,3 +1,4 @@
+// Define data
 export type Data = {
   temp: number;
   thermostat: boolean;
