@@ -46,7 +46,7 @@ export default function LiveStatus() {
   
   if (!data) {
     return (
-      <div className="flex items-center justify-center min-h-64 bg-black/90 backdrop-blur-sm rounded-lg border border-purple-500/30">
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm">
         <div className="text-center">
           <div className="text-6xl mb-4 animate-pulse">👻</div>
           <div className="text-purple-300 text-lg font-medium animate-bounce">
