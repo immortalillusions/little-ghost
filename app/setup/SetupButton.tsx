@@ -4,12 +4,36 @@ import { useState, useEffect } from "react";
 
 type ButtonType = "thermostat" | "lock" | "light";
 
+const deviceConfig = {
+  thermostat: {
+    icon: "🌡️",
+    name: "Ethereal Furnace",
+    color: "orange",
+    description: "Controls the spirit realm temperature"
+  },
+  lock: {
+    icon: "🔐",
+    name: "Cursed Lock",
+    color: "red",
+    description: "Seals portals to other dimensions"
+  },
+  light: {
+    icon: "🕯️",  
+    name: "Phantom Light",
+    color: "yellow",
+    description: "Illuminates the supernatural realm"
+  }
+};
+
 export default function SetupButton({ type }: { type: ButtonType }) {
   const [status, setStatus] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [thermo, setThermo] = useState<number | null>(null);
   const [lock, setLock] = useState<number | null>(null);
   const [light, setLight] = useState<number | null>(null);
+
+  const config = deviceConfig[type];
+
   // Fetch positions once on mount
   useEffect(() => {
     const fetchPositions = async () => {
@@ -23,9 +47,10 @@ export default function SetupButton({ type }: { type: ButtonType }) {
     };
     fetchPositions();
   }, []);
+
   const handleClick = async () => {
     setLoading(true);
-    setStatus("Listening for 5 seconds...");
+    setStatus("🔮 Communing with spirits...");
     let lastValue: number | null = null;
 
     // Poll API every second for 5 seconds
@@ -33,23 +58,26 @@ export default function SetupButton({ type }: { type: ButtonType }) {
       const res = await fetch('http://localhost:3000/api/getInstructions');
       const data = await res.json();
       lastValue = data.location;
-      setStatus(`Received position: ${lastValue} (second ${i + 1}/5)`);
+      setStatus(`👻 Spirit whispers: ${lastValue}° (${i + 1}/5)`);
       await new Promise((r) => setTimeout(r, 1000));
     }
-    setStatus(`Saving position: ${lastValue}...`);
+    
+    setStatus(`⚡ Binding essence at ${lastValue}°...`);
+    
     const response = await fetch("http://localhost:3000/api/updateJSON", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ type, value: lastValue }),
     });
+    
     const results = await response.json();
+    
     if (response.status == 200) {
-      setStatus(`Location saved as ${lastValue}!`);
+      setStatus(`✨ Ritual complete! Bound at ${lastValue}°`);
     } else {
-      setStatus(`Error: ${results.message}`);
+      setStatus(`💀 Curse failed: ${results.message}`);
     }
     
-
     setLight(results.positions.light_location);
     setLock(results.positions.lock_location);
     setThermo(results.positions.thermo_location);
@@ -57,66 +85,119 @@ export default function SetupButton({ type }: { type: ButtonType }) {
     setLoading(false);
   };
 
-  return (
-    <div
-      style={{
-        margin: "0 1rem",
-        border: "2px solid #ccc",
-        borderRadius: "8px",
-        padding: "1rem",
-        width: "250px",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        boxSizing: "border-box",
-      }}
-    >
-      <div>Positions in Degrees: {String(type) == "thermostat"? thermo : String(type) == "lock" ? lock : light}</div>
+  const getCurrentPosition = () => {
+    switch(type) {
+      case "thermostat": return thermo;
+      case "lock": return lock;
+      case "light": return light;
+      default: return null;
+    }
+  };
 
-    <button
-      onClick={handleClick}
-      disabled={loading}
-      style={{
-        width: "200px",
-        height: "40px",
-        fontSize: "1rem",
-        borderRadius: "6px",
-        marginBottom: "0.5rem",
-        whiteSpace: "normal",
-        wordBreak: "break-word",
-        backgroundColor: loading ? "#b0b0b0" : "#1976d2",
-        color: "#fff",
-        border: "none",
-        cursor: loading ? "not-allowed" : "pointer",
-        transition: "background 0.2s",
-      }}
-      onMouseOver={e => {
-        if (!loading) (e.currentTarget.style.backgroundColor = "#1565c0");
-      }}
-      onMouseOut={e => {
-        if (!loading) (e.currentTarget.style.backgroundColor = "#1976d2");
-      }}
-    >
-      {type.charAt(0).toUpperCase() + type.slice(1)}
-    </button>
-      <div
-        style={{
-          width: "200px",
-          height: "48px",
-          border: "2px solid #ccc",
-          borderRadius: "6px",
-          padding: "0.5rem",
-          fontSize: "0.95rem",
-          textAlign: "center",
-          wordBreak: "break-word",
-          overflowWrap: "break-word",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        {status}
+  const getColorClasses = () => {
+    switch(config.color) {
+      case "orange": return {
+        border: "border-orange-500/50",
+        bg: "bg-orange-900/30",
+        button: "bg-orange-600 hover:bg-orange-700",
+        shadow: "shadow-orange-500/20"
+      };
+      case "red": return {
+        border: "border-red-500/50", 
+        bg: "bg-red-900/30",
+        button: "bg-red-600 hover:bg-red-700",
+        shadow: "shadow-red-500/20"
+      };
+      case "yellow": return {
+        border: "border-yellow-500/50",
+        bg: "bg-yellow-900/30", 
+        button: "bg-yellow-600 hover:bg-yellow-700",
+        shadow: "shadow-yellow-500/20"
+      };
+      default: return {
+        border: "border-purple-500/50",
+        bg: "bg-purple-900/30",
+        button: "bg-purple-600 hover:bg-purple-700", 
+        shadow: "shadow-purple-500/20"
+      };
+    }
+  };
+
+  const colors = getColorClasses();
+  const currentPos = getCurrentPosition();
+
+  return (
+    <div className={`
+      relative w-80 p-6 rounded-lg border-2 transition-all duration-300 hover:scale-105
+      ${colors.border} ${colors.bg} shadow-lg ${colors.shadow}
+      backdrop-blur-sm
+    `}>
+      {/* Floating icon */}
+      <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+        <div className="text-4xl animate-bounce bg-black/80 rounded-full p-2 border border-current">
+          {config.icon}
+        </div>
       </div>
+
+      {/* Header */}
+      <div className="text-center mb-6 mt-4">
+        <h3 className="text-xl font-bold text-white mb-1">{config.name}</h3>
+        <p className="text-gray-300 text-sm opacity-80">{config.description}</p>
+      </div>
+
+      {/* Position Display */}
+      <div className="mb-6 p-4 bg-black/40 rounded-lg border border-gray-600/30">
+        <div className="text-center">
+          <div className="text-gray-400 text-sm font-medium mb-1">Current Position</div>
+          <div className="text-2xl font-bold text-white">
+            {currentPos !== null ? `${currentPos}°` : "Unknown"}
+          </div>
+          <div className="text-gray-500 text-xs mt-1">Ethereal Degrees</div>
+        </div>
+      </div>
+
+      {/* Action Button */}
+      <button
+        onClick={handleClick}
+        disabled={loading}
+        className={`
+          w-full h-12 text-white font-medium rounded-lg transition-all duration-300
+          ${colors.button}
+          ${loading 
+            ? 'opacity-60 cursor-not-allowed' 
+            : 'hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl'
+          }
+          flex items-center justify-center gap-2
+        `}
+      >
+        {loading ? (
+          <>
+            <span className="animate-spin text-lg">🔮</span>
+            Performing Ritual...
+          </>
+        ) : (
+          <>
+            <span>{config.icon}</span>
+            Summon {config.name}
+          </>
+        )}
+      </button>
+
+      {/* Status Display */}
+      <div className="mt-4 p-4 bg-black/60 rounded-lg border border-gray-700/40 min-h-16">
+        <div className="text-center text-sm text-gray-300 break-words">
+          {status || (
+            <span className="text-gray-500 italic">
+              Awaiting supernatural instructions...
+            </span>
+          )}
+        </div>
+      </div>
+
+      {/* Mystical border glow effect */}
+      {loading && (
+        <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-transparent via-current to-transparent opacity-20 animate-pulse pointer-events-none" />
+      )}
     </div>
-);
+  );
 }
