@@ -34,7 +34,7 @@ export default function SetupButton({ type }: { type: ButtonType }) {
       const data = await res.json();
       lastValue = data.location;
       setStatus(`Received position: ${lastValue} (second ${i + 1}/5)`);
-      await new Promise((r) => setTimeout(r, 1000));
+      await new Promise((r) => setTimeout(r, 50));
     }
     setStatus(`Saving position: ${lastValue}...`);
     const response = await fetch("http://localhost:3000/api/updateJSON", {

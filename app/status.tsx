@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import {fetchData} from './data';
 import { Data } from './types';
 export default function LiveStatus() {
-  const [data, setData] = useState<Data | null>(null);
+const [data, setData] = useState<Data | null>(null);
 
   useEffect(() => {
     const fetchAndSetData = async () => {
@@ -19,7 +19,7 @@ export default function LiveStatus() {
 
     fetchAndSetData(); // fetch immediately on mount
     // change to 1s later
-    const interval = setInterval(fetchAndSetData, 10000);
+    const interval = setInterval(fetchAndSetData, 50);
 
     return () => clearInterval(interval);
   }, []);
