@@ -35,17 +35,21 @@ https://www.youtube.com/watch?v=988CdFs7gWw
 
 1. **Gesture Detection:**  
    The IMU (on the ESP32) captures human movement and recognizes gestures.
+   Gestures are detected using an MPU-6050 IMU connected to the ESP32. At startup, the device performs a 5-second calibration to remove bias from raw accelerometer and gyroscope readings.
 
-2. **Data Transmission:**  
+   Every 10 ms, these values are passed into the Madgwick filter, which performs real-time sensor fusion using quaternions to compute roll, pitch, and yaw with minimal drift. Yaw is locked to a reference point to calculate a stable heading (0–360°), which is converted to compass directions.
+   Gestures are triggered when acceleration or angular velocity exceeds a threshold after being normalized over a time period (e.g., shaking or rotation). A debounce timer prevents repeat detection for 300 ms. To avoid false positives, a gesture must occur twice within 0.7 second to be accepted. This double-gesture confirmation ensures high reliability in noisy environments.
+
+3. **Data Transmission:**  
    The ESP32 sends gesture data to the web server over TCP.
 
-3. **Web Server:**  
+4. **Web Server:**  
    The server processes the gesture and updates the appliance state.
 
-4. **Website:**  
+5. **Website:**  
    The main website displays the current state and allows for additional manual control.
 
-5. **Appliance Control:**  
+6. **Appliance Control:**  
    The server relays commands to an Arduino via USB serial. The Arduino simulates the appliances using an LCD, LED, and servo.
 
 ## Technologies Used
