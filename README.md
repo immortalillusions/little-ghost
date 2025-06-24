@@ -2,6 +2,13 @@
 
 Lil Ghost is a full-stack smart home system that allows users to control home appliances using natural human gestures from a distance. This project is especially useful for people with disabilities or anyone who wants a more convenient, hands-free way to interact with their environment.
 
+## How it Works
+Lil Ghost has three main components:
+1) IMU Sensor & ESP32: Generates input data and sends gesture (roll_right, roll_left, pitch_up, pitch_down) and position (0-360 degrees) data via WIFI
+2) Website: UI displays the status of all devices (e.g., temperature of thermostat, whether the lock is locked) and has a setup option to allow the user to choose the location of each device.
+3) Devices Prototype: Prototype of the lights (using LED) and thermostat (using LCD) on an Arduino. This is connected to a Python server via serial connection (since we did not have an Arduino with a wifi module). The Python server receives data from the IMU.
+![image](https://github.com/user-attachments/assets/9195a7d9-eb71-479f-ac13-8affdd99d89a)
+
 ## Features
 
 - **Gesture-Based Control:**  
@@ -59,4 +66,4 @@ Lil Ghost is a full-stack smart home system that allows users to control home ap
 2. **Install dependencies**  
    ```sh
    npm install
-3. **Setup the IMU and the Arduino (LED, LCD, servo motor)**
+3. **Setup the IMU and the Arduino (LED, LCD, servo motor).** If there are no devices / hardware, the website will display live mock data.
