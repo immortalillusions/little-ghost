@@ -29,7 +29,7 @@ export async function fetchData() {
     : "";
   console.log(`Base URL: ${baseUrl}`);
   console.log("ENV VARS:", JSON.stringify(process.env, null, 2));
-  const res = await fetch(`${baseUrl}/api/getInstructions`); // Example API
+  const res = await fetch(`/api/getInstructions`); // Example API
   if (!res.ok) throw new Error('Failed to fetch data');
   const data = await res.json();
   const gesture = data.gesture;
