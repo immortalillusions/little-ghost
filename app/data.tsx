@@ -23,7 +23,7 @@ function inRange(center: number, value: number, tolerance: number) {
 
 export async function fetchData() {
   // simulate getting data from the accelerator / gyrometer
-  let baseUrl = process.env.NODE_ENV === "production"? process.env.PUBLIC_BASE_URL: "http://localhost:3000"; // Use environment variable or fallback to localhost
+  let baseUrl = process.env.NODE_ENV === "production"? process.env.NEXT_PUBLIC_BASE_URL: "http://localhost:3000"; // Use environment variable or fallback to localhost
   console.log(`Base URL: ${baseUrl}`);
   baseUrl = baseUrl?.replace(/\/$/, '') || "http://localhost:3000"; //?
   const res = await fetch(`${baseUrl}/api/getInstructions`); // Example API
