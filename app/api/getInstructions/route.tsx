@@ -6,7 +6,10 @@
 // to simulate marzouqs code thing
 export async function GET() {
     try {
-
+        const production = process.env.NODE_ENV === "production"; 
+        if (production){
+            throw new Error("This API is not available in production mode. Please use the mock data for testing.");
+        }
 
         const actionRes = await fetch("http://192.168.4.1");
         if (!actionRes.ok) throw new Error("Failed to fetch action");

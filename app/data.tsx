@@ -23,9 +23,11 @@ function inRange(center: number, value: number, tolerance: number) {
 
 export async function fetchData() {
   // simulate getting data from the accelerator / gyrometer
-  const baseUrl = process.env.NODE_ENV === "production"? process.env.BASE_URL: "http://localhost:3000"; // Use environment variable or fallback to localhost
+  const baseUrl = process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : "http://localhost:3000";
   console.log(`Base URL: ${baseUrl}`);
-  const res = await fetch(`/api/getInstructions`); // Example API
+  const res = await fetch(`${baseUrl}/api/getInstructions`); // Example API
   if (!res.ok) throw new Error('Failed to fetch data');
   const data = await res.json();
   const gesture = data.gesture;
@@ -50,14 +52,14 @@ export async function fetchData() {
   console.log(`Gesture: ${gesture}, Item: ${item}`);
   // change temp
   if (item == "thermostat" && thermostat) {
-    if(gesture == 'pitch_up') {
+    if (gesture == 'pitch_up') {
       temp += 1; // increase temp
       message = "Lil Ghost increased temperature to " + temp + "°C";
     } else if (gesture == 'pitch_down') {
       temp -= 1;
       message = "Lil Ghost decreased temperature to " + temp + "°C";
 
-    } 
+    }
   }
   // open thermostat
   if (item == "thermostat") {
@@ -89,5 +91,5 @@ export async function fetchData() {
       message = "Lil Ghost unlocked the door";
     }
   }
-  return {temp, thermostat, light, lock, message, location, item, mock} as Data;
+  return { temp, thermostat, light, lock, message, location, item, mock } as Data;
 }
