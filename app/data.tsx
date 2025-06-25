@@ -23,9 +23,10 @@ function inRange(center: number, value: number, tolerance: number) {
 
 export async function fetchData() {
   // simulate getting data from the accelerator / gyrometer
-  const baseUrl = process.env.VERCEL_URL
-    ? `https://${process.env.VERCEL_URL}`
-    : "http://localhost:3000";
+  const isServer = typeof window === "undefined";
+  const baseUrl = isServer
+    ? process.env.BASE_URL || `https://${process.env.VERCEL_URL}` || "http://localhost:3000"
+    : "";
   console.log(`Base URL: ${baseUrl}`);
   console.log("ENV VARS:", JSON.stringify(process.env, null, 2));
   const res = await fetch(`${baseUrl}/api/getInstructions`); // Example API
