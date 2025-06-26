@@ -16,7 +16,7 @@ export default function LiveStatus() {
   useEffect(() => {
     const fetchPositions = async () => {
       const response = await fetch(`${baseUrl}/api/getJSON`);
-      
+      console.log("Data fetched from /api/getJSON:", response);
       if (response.status === 200) {
         const data = await response.json();
         setThermo(data.thermo_location);
