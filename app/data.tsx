@@ -25,7 +25,7 @@ export async function fetchData() {
   // simulate getting data from the accelerator / gyrometer
   const isServer = typeof window === "undefined";
   const baseUrl = isServer
-    ? process.env.BASE_URL || `https://${process.env.VERCEL_URL}` || "http://localhost:3000"
+    ? process.env.BASE_URL || process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
     : "";
   console.log(`Base URL: ${baseUrl}`);
   console.log("ENV VARS:", JSON.stringify(process.env, null, 2));
