@@ -93,5 +93,6 @@ export async function fetchData() {
       message = "Lil Ghost unlocked the door";
     }
   }
+  console.log(`Thermostat: ${thermostat}, Temp: ${temp}, Light: ${light}, Lock: ${lock}`);
   return { temp, thermostat, light, lock, message, location, item, mock } as Data;
 }
