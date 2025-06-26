@@ -9,7 +9,7 @@ export default function LiveStatus() {
   const [thermo, setThermo] = useState<number | null>(null);
   const [lock, setLock] = useState<number | null>(null);
   const [light, setLight] = useState<number | null>(null);
-  const baseUrl = process.env.NODE_ENV === "production"? `https://${process.env.VERCEL_URL}`: "http://localhost:3000"; // Use environment variable or fallback to localhost
+  const baseUrl = process.env.NODE_ENV === "production"? process.env.NEXT_PUBLIC_BASE_URL: "http://localhost:3000"; // Use environment variable or fallback to localhost
   console.log(`Base URL: ${baseUrl}`);
 
   // Fetch positions once on mount
