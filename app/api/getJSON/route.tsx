@@ -4,7 +4,7 @@ export async function GET() {
     "http://localhost:3000";
 
   const response = await fetch(`${baseUrl}/locations.json`, {
-    cache: "no-store", // optional: prevent caching in dev
+    cache: "no-store",
   });
 
   if (!response.ok) {

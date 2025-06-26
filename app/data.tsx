@@ -27,8 +27,8 @@ export async function fetchData() {
   const baseUrl = isServer
     ? process.env.BASE_URL || process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
     : "";
-  console.log(`Base URL: ${baseUrl}`);
-  console.log("ENV VARS:", JSON.stringify(process.env, null, 2));
+  //console.log(`Base URL: ${baseUrl}`);
+  //console.log("ENV VARS:", JSON.stringify(process.env, null, 2));
   const res = await fetch(`${baseUrl}/api/getInstructions`); // Example API
   console.log("Data fetched from /api/getInstructions:", res);
   if (!res.ok) throw new Error('Failed to fetch data');
