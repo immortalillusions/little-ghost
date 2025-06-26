@@ -1,5 +1,6 @@
 export async function GET() {
   if (process.env.NODE_ENV === "production") {
+    await new Promise(r => setTimeout(r, 2000)); // throttle it
     return Response.json(makeMock());
   }
 
