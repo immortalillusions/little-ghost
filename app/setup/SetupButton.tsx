@@ -39,7 +39,7 @@ export default function SetupButton({ type }: { type: ButtonType }) {
   // Fetch positions once on mount
   useEffect(() => {
     const fetchPositions = async () => {
-      const response = await fetch(`/api/getJSON`);
+      const response = await fetch(`${baseUrl}/api/getJSON`);
       if (response.status === 200) {
         const data = await response.json();
         setThermo(data.thermo_location);
