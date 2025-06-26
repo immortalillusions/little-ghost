@@ -35,7 +35,7 @@ export default function SetupButton({ type }: { type: ButtonType }) {
   const config = deviceConfig[type];
 
   const baseUrl = process.env.NODE_ENV === "production"? `https://${process.env.VERCEL_URL}`: "http://localhost:3000"; // Use environment variable or fallback to localhost
-
+  console.log(`Base URL: ${baseUrl}`);
   // Fetch positions once on mount
   useEffect(() => {
     const fetchPositions = async () => {
