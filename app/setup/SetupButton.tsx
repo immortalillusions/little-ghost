@@ -39,7 +39,7 @@ export default function SetupButton({ type }: { type: ButtonType }) {
   // Fetch positions once on mount
   useEffect(() => {
     const fetchPositions = async () => {
-      const response = await fetch(`/api/getJSON`);
+      const response = await fetch(`${baseUrl}/api/getJSON`);
       if (response.status === 200) {
         const data = await response.json();
         setThermo(data.thermo_location);
@@ -57,7 +57,7 @@ export default function SetupButton({ type }: { type: ButtonType }) {
 
     // Poll API every second for 5 seconds
     for (let i = 0; i < 5; i++) {
-      const res = await fetch(`/api/getInstructions`);
+      const res = await fetch(`${baseUrl}/api/getInstructions`);
       const data = await res.json();
       lastValue = data.location;
       setStatus(`👻 Spirit whispers: ${lastValue}° (${i + 1}/5)`);
@@ -66,7 +66,7 @@ export default function SetupButton({ type }: { type: ButtonType }) {
     
     setStatus(`⚡ Binding essence at ${lastValue}°...`);
     
-    const response = await fetch(`/api/updateJSON`, {
+    const response = await fetch(`${baseUrl}/api/updateJSON`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ type, value: lastValue }),
