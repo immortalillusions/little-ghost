@@ -37,9 +37,8 @@ export async function fetchData() {
   const location = data.location;
   const mock = data.mock;
   // Read locations from a JSON file
-  const locationsPath = path.join(process.cwd(), "locations.json");
-  const locationsRaw = await fs.readFile(locationsPath, "utf-8");
-  const { thermo_location, lock_location, light_location } = JSON.parse(locationsRaw);
+  const locationsRaw = await fetch(`${baseUrl}/api/getJSON`); 
+  const { thermo_location, lock_location, light_location } = await locationsRaw.json();
 
   if (inRange(thermo_location, location, tolerance)) {
     item = "thermostat";

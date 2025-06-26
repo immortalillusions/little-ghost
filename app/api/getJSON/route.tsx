@@ -1,11 +1,16 @@
-import fs from "fs/promises";
-import path from "path";
+export async function GET() {
+  const baseUrl =
+    process.env.NEXT_PUBLIC_BASE_URL ||
+    "http://localhost:3000";
 
-export async function GET(request: Request) {
+  const response = await fetch(`${baseUrl}/locations.json`, {
+    cache: "no-store", // optional: prevent caching in dev
+  });
 
-  const locationsPath = path.join(process.cwd(), "locations.json");
-  const locationsRaw = await fs.readFile(locationsPath, "utf-8");
-  const locations = JSON.parse(locationsRaw);
+  if (!response.ok) {
+    return new Response("Failed to load locations.json", { status: 500 });
+  }
 
+  const locations = await response.json();
   return Response.json(locations);
 }
