@@ -34,7 +34,7 @@ export default function SetupButton({ type, activeType, setActiveType }: { type:
 
   const config = deviceConfig[type];
 
-  const baseUrl = process.env.NODE_ENV === "production"? process.env.PUBLIC_BASE_URL: "http://localhost:3000"; // Use environment variable or fallback to localhost
+  const baseUrl = process.env.NODE_ENV === "production"? process.env.NEXT_PUBLIC_BASE_URL: "http://localhost:3000"; // Use environment variable or fallback to localhost
 
   // Fetch positions once on mount
   useEffect(() => {
