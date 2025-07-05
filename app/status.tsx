@@ -184,7 +184,7 @@ useEffect(() => {
           <StatusCard
             icon="🌡️"
             label="Thermostat Temperature"
-            value={data.thermostat ? `${data.temp}°F` : "Off"}
+            value={data.thermostat ? `${data.temp}°C` : "Off"}
             isActive={data.thermostat}
           />
           

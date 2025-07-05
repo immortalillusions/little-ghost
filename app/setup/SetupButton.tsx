@@ -7,7 +7,7 @@ type ButtonType = "thermostat" | "lock" | "light";
 const deviceConfig = {
   thermostat: {
     icon: "🌡️",
-    name: "Thermometer",
+    name: "Thermostat",
     color: "orange",
     description: "Controls the spirit realm temperature"
   },
@@ -25,7 +25,7 @@ const deviceConfig = {
   }
 };
 
-export default function SetupButton({ type }: { type: ButtonType }) {
+export default function SetupButton({ type, activeType, setActiveType }: { type: ButtonType; activeType: ButtonType | null; setActiveType: (type: ButtonType | null) => void }) {
   const [status, setStatus] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [thermo, setThermo] = useState<number | null>(null);
@@ -34,8 +34,8 @@ export default function SetupButton({ type }: { type: ButtonType }) {
 
   const config = deviceConfig[type];
 
-  const baseUrl = process.env.NODE_ENV === "production"? process.env.NEXT_PUBLIC_BASE_URL: "http://localhost:3000"; // Use environment variable or fallback to localhost
-  console.log(`Base URL: ${baseUrl}`);
+  const baseUrl = process.env.NODE_ENV === "production"? process.env.PUBLIC_BASE_URL: "http://localhost:3000"; // Use environment variable or fallback to localhost
+
   // Fetch positions once on mount
   useEffect(() => {
     const fetchPositions = async () => {
@@ -51,6 +51,7 @@ export default function SetupButton({ type }: { type: ButtonType }) {
   }, []);
 
   const handleClick = async () => {
+    setActiveType(type);
     setLoading(true);
     setStatus("🔮 Communing with spirits...");
     let lastValue: number | null = null;
@@ -85,6 +86,7 @@ export default function SetupButton({ type }: { type: ButtonType }) {
     setThermo(results.positions.thermo_location);
     
     setLoading(false);
+    setActiveType(null);
   };
 
   const getCurrentPosition = () => {
@@ -152,7 +154,7 @@ export default function SetupButton({ type }: { type: ButtonType }) {
         <div className="text-center">
           <div className="text-gray-400 text-sm font-medium mb-1">Current Position</div>
           <div className="text-2xl font-bold text-white">
-            {currentPos !== null ? `${currentPos}°` : "Unknown"}
+            {currentPos !== null ? `${currentPos}°` : "Loading..."}
           </div>
           <div className="text-gray-500 text-xs mt-1">Degrees Celsius</div>
         </div>
@@ -161,12 +163,12 @@ export default function SetupButton({ type }: { type: ButtonType }) {
       {/* Action Button */}
       <button
         onClick={handleClick}
-        disabled={loading}
+        disabled={loading || (activeType !== null)}
         className={`
           w-full h-12 text-white font-medium rounded-lg transition-all duration-300
           ${colors.button}
-          ${loading 
-            ? 'opacity-60 cursor-not-allowed' 
+          ${loading || (activeType !== null)
+            ? 'opacity-60' 
             : 'hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl'
           }
           flex items-center justify-center gap-2

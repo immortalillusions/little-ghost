@@ -1,16 +1,27 @@
+import { createClient } from 'redis';
+
 export async function GET() {
-  const baseUrl =
-    process.env.NEXT_PUBLIC_BASE_URL ||
-    "http://localhost:3000";
+  const redis = await createClient({ url: process.env.REDIS_URL }).connect();
 
-  const response = await fetch(`${baseUrl}/locations.json`, {
-    cache: "no-store",
-  });
-
-  if (!response.ok) {
-    return new Response("Failed to load locations.json", { status: 500 });
-  }
-
-  const locations = await response.json();
-  return Response.json(locations);
+  const thermoLocation = await redis.get("thermo_location");
+  const lockLocation = await redis.get("lock_location");
+  const lightLocation = await redis.get("light_location");
+  const temp = await redis.get("temp");
+  const light = await redis.get("light");
+  const lock = await redis.get("lock");
+  const thermostat = await redis.get("thermostat");
+  const locations: Record<string, number> = {
+    "thermo_location": Number(thermoLocation),
+    "lock_location": Number(lockLocation),
+    "light_location": Number(lightLocation),
+  };
+  return Response.json({
+      thermo_location: locations.thermo_location,
+      lock_location: locations.lock_location,
+      light_location: locations.light_location,
+      temp: Number(temp),
+      light: light === 'true',
+      lock: lock === 'true',
+      thermostat: thermostat === 'true'
+    }, { status: 200 });
 }

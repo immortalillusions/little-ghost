@@ -4,13 +4,11 @@
 
 "use server";
 import { Data } from './types';
-import fs from "fs/promises";
-import path from "path";
 
-let temp = 20; // temp (and change updateJSON to be 45)
-let thermostat = false; // off
-let light = false; // off
-let lock = false; // unlocked
+// let temp = 20; // temp (and change updateJSON to be 45)
+// let thermostat = false; // off
+// let light = false; // off
+// let lock = false; // unlocked
 let message = "";
 let item = "nothing"; // default item
 const tolerance = 20;
@@ -19,6 +17,25 @@ const tolerance = 20;
 function inRange(center: number, value: number, tolerance: number) {
   const diff = Math.abs(((value - center + 180 + 360) % 360) - 180);
   return diff <= tolerance;
+}
+
+async function updateStatus(item: string, value: boolean | number) {
+  const isServer = typeof window === "undefined";
+  const baseUrl = isServer
+    ? process.env.BASE_URL || process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
+    : "";
+  console.log(`Base URL before: ${baseUrl}`);
+  const res = await fetch(`${baseUrl}/api/setStatus`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ item, value }),
+  });
+  if (!res.ok) {
+      const errorBody = await res.text();
+      console.error("API error response:", errorBody);
+      throw new Error("Failed to update status" + errorBody);
+  }
+  return await res.json();
 }
 
 export async function fetchData() {
@@ -38,8 +55,9 @@ export async function fetchData() {
   const mock = data.mock;
   // Read locations from a JSON file
   const locationsRaw = await fetch(`${baseUrl}/api/getJSON`); 
-  const { thermo_location, lock_location, light_location } = await locationsRaw.json();
-
+  const locationsJson = await locationsRaw.json();
+  const { thermo_location, lock_location, light_location } = locationsJson;
+  let { temp, light, lock, thermostat } = locationsJson;
   if (inRange(thermo_location, location, tolerance)) {
     item = "thermostat";
   } else if (inRange(lock_location, location, tolerance)) {
@@ -57,10 +75,11 @@ export async function fetchData() {
     if (gesture == 'pitch_up') {
       temp += 1; // increase temp
       message = "Lil Ghost increased temperature to " + temp + "°C";
+      await updateStatus("temp", temp);
     } else if (gesture == 'pitch_down') {
       temp -= 1;
       message = "Lil Ghost decreased temperature to " + temp + "°C";
-
+      await updateStatus("temp", temp);
     }
   }
   // open thermostat
@@ -68,9 +87,11 @@ export async function fetchData() {
     if (gesture == 'roll_right') {
       thermostat = true; // turn on
       message = "Lil Ghost turned on the thermostat";
+      await updateStatus("thermostat", true);
     } else if (gesture == 'roll_left') {
       thermostat = false; // turn off
       message = "Lil Ghost turned off the thermostat";
+      await updateStatus("thermostat", false);
     }
   }
   // toggle light
@@ -78,9 +99,11 @@ export async function fetchData() {
     if (gesture == 'roll_right') {
       light = true; // turn on
       message = "Lil Ghost turned on the light";
+      await updateStatus("light", true);
     } else if (gesture == 'roll_left') {
       light = false; // turn off
       message = "Lil Ghost turned off the light";
+      await updateStatus("light", false);
     }
   }
   // toggle lock
@@ -88,9 +111,11 @@ export async function fetchData() {
     if (gesture == 'roll_right') {
       lock = true; // lock
       message = "Lil Ghost locked the door";
+      await updateStatus("lock", true);
     } else if (gesture == 'roll_left') {
       lock = false; // unlock
       message = "Lil Ghost unlocked the door";
+      await updateStatus("lock", false);
     }
   }
   console.log(`Thermostat: ${thermostat}, Temp: ${temp}, Light: ${light}, Lock: ${lock}`);

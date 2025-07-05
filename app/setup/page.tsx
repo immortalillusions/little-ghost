@@ -1,11 +1,10 @@
-"use server";
+"use client";
 import SetupButton from './SetupButton';
+import { useState } from 'react';
 
-export default async function Setup() {
+export default function Setup() {
   console.log("setup")
-  // const data = await fetchData();
-  // console.log("Data fetched:", data);
-  
+  const [activeType, setActiveType] = useState<null | "thermostat" | "lock" | "light">(null);
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-purple-900/30 p-8 pb-20 sm:p-20">
       <div className="max-w-6xl mx-auto">
@@ -26,13 +25,13 @@ export default async function Setup() {
         {/* Setup Cards Container */}
         <div className="flex flex-wrap justify-center gap-8">
           <div className="transform hover:scale-105 transition-all duration-300">
-            <SetupButton type="thermostat" />
+            <SetupButton type="thermostat" activeType={activeType} setActiveType={setActiveType}/>
           </div>
           <div className="transform hover:scale-105 transition-all duration-300">
-            <SetupButton type="lock" />
+            <SetupButton type="lock" activeType={activeType} setActiveType={setActiveType}/>
           </div>
           <div className="transform hover:scale-105 transition-all duration-300">
-            <SetupButton type="light" />
+            <SetupButton type="light" activeType={activeType} setActiveType={setActiveType}/>
           </div>
         </div>
 
